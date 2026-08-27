@@ -1,0 +1,82 @@
+# ---------------------------------------------------------------------------
+# Resolved default configuration for the Visual Market Intelligence system.
+#
+# Everything the system does is described here. Environment variables of the
+# form VMI_<SECTION>__<FIELD> override any value (see .env.example), and the
+# API accepts per-request overrides for the few fields a caller should control.
+# ---------------------------------------------------------------------------
+
+vision:
+  provider: ollama            # ollama | openai_compatible | openrouter | stub
+  model: qwen2.5vl:7b
+  base_url: http://127.0.0.1:11434
+  api_key: ""
+  timeout_s: 300
+  temperature: 0.0            # deterministic reads; this is perception, not prose
+  max_tokens: 1600
+  retries: 2
+  grounding: window          # none | window | full - how much is told vs. read
+
+data:
+  provider: yahoo             # yahoo | metatrader | csv
+  cache_dir: data/cache
+  cache_ttl_s: 900
+  max_bars: 240               # bars drawn on a chart; more than this is unreadable
+
+api:
+  host: 127.0.0.1
+  port: 8100
+  keys: []                    # empty list = unauthenticated (bind to localhost only)
+
+storage:
+  runs_dir: data/runs
+  index_db: data/runs/index.db
+  keep_charts: true
+
+# The three-timeframe ladder. Each entry is one chart and one visual analyst.
+# `role` decides which prompt the analyst is given; the ladder is ordered from
+# the highest timeframe down, and the first entry is the context timeframe.
+timeframes:
+  - name: H4
+    interval: 4h
+    lookback: 180d
+    role: context
+    indicators: [ema50, ema200, bbands, rsi, macd, atr, volume, levels]
+  - name: H1
+    interval: 1h
+    lookback: 60d
+    role: setup
+    indicators: [ema20, ema50, ema200, bbands, rsi, macd, atr, volume, levels]
+  - name: M15
+    interval: 15m
+    lookback: 10d
+    role: entry
+    indicators: [ema9, ema20, ema50, rsi, macd, atr, volume, levels]
+
+chart:
+  width_px: 1280
+  height_px: 900
+  dpi: 100
+  style: dark                 # dark | light - fixed per run, never randomised
+  price_gridlines: 8          # labelled horizontal rules; the model reads levels off these
+  show_last_price_tag: true
+  candle_body_min_px: 1.0
+  level_lookback_pivots: 5    # bars either side of a swing point
+
+opportunity:
+  # Weights used by the deterministic Opportunity agent when scoring a scenario.
+  weight_alignment: 0.35
+  weight_setup_confidence: 0.30
+  weight_entry_confirmation: 0.20
+  weight_structure_quality: 0.15
+  min_score_to_watch: 0.45    # below this the state is NO_TRADE
+  min_score_to_trigger: 0.65  # a triggered scenario must also clear this
+  conflict_penalty: 0.25      # subtracted when the timeframes disagree
+
+evaluation:
+  horizons: [10, 20, 50]      # bars forward, scored on the entry timeframe
+  atr_multiple_hit: 1.0       # what counts as "the target zone was reached"
+
+logging:
+  level: INFO
+  json: false

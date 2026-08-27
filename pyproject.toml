@@ -1,0 +1,53 @@
+[project]
+name = "vmi"
+version = "0.1.0"
+description = "Visual Market Intelligence - a standalone multi-agent chart-vision analysis service"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "pydantic>=2.7",
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "matplotlib>=3.7",
+    "pillow>=10.0",
+    "yfinance>=0.2.40",
+    "httpx>=0.27",
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+    "streamlit>=1.32",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# MetaTrader 5 is Windows-only and needs a running terminal, so it is never a
+# hard dependency: the Yahoo provider covers every symbol the demo uses.
+mt5 = ["MetaTrader5>=5.0.45"]
+
+[project.scripts]
+vmi = "vmi.interfaces.cli.main:main"
+
+[dependency-groups]
+dev = ["ruff>=0.5"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/vmi"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+src = ["src", "ui"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "N", "UP", "B", "C4", "SIM", "RET", "RUF"]
+ignore = [
+    "B008",    # FastAPI's Depends() in a default argument is the framework's idiom
+    "N818",    # DataUnavailable reads better than DataUnavailableError
+    "RUF001",  # en dashes and typographic quotes are deliberate in prose
+    "RUF002",
+    "RUF003",
+]

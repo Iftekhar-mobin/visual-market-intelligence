@@ -1,0 +1,16 @@
+# The console's base theme. Set here rather than in CSS so that every Streamlit
+# widget — code blocks, tables, inputs — is dark too; overriding only the page
+# background leaves light-themed widgets stranded on a dark ground.
+[theme]
+base = "dark"
+primaryColor = "#7c6cf0"
+backgroundColor = "#0e1117"
+secondaryBackgroundColor = "#161a23"
+textColor = "#d7dce5"
+
+[server]
+headless = true
+fileWatcherType = "auto"
+
+[browser]
+gatherUsageStats = false

@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+*.egg-info/
+build/
+dist/
+.ruff_cache/
+.pytest_cache/
+
+# Generated at run time: charts, agent JSON, the run index.
+data/runs/
+data/cache/
+logs/
+*.db
+*.sqlite3
+
+# Charts written by `vmi charts` are output, not source.
+data/charts/

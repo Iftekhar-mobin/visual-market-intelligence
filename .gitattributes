@@ -1,0 +1,6 @@
+# Normalise line endings in the repository; check out native.
+* text=auto
+
+*.png binary
+*.jpg binary
+*.csv text eol=lf
